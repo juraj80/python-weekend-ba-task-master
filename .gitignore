@@ -1,0 +1,3 @@
+/example/*.csv
+.vscode/
+__pycache__/
