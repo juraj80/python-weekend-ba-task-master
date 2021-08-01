@@ -1,47 +1,55 @@
 import csv
 import sys
+from datetime import datetime
 
 #bags = 1
-print(str(sys.argv))
 
+data_file = './example/example.csv'
+ticket_origin = 'WIW'
+ticket_destination = 'RFZ'
 
-data_file = sys.argv[1]
-origin = sys.argv[2]
-destination = sys.argv[3]
 
 # import csv file and convert it to the list of dictionaries
 with open(data_file, mode='r') as infile:
     reader = csv.reader(infile)
     headings = next(reader)
-    all_flights = []
+    flights = []
 
     for row in reader:
         flight = {}
         for i in range(len(row)):
             flight[headings[i]] = row[i]
-        all_flights.append(flight)
+        flights.append(flight)
 
 route = []
 
 
-def flight_search(ori, dest):
-    for flight in all_flights:
-        if flight['origin'] == ori and flight['destination'] == dest:
+def flight_search(current_flight_origin, current_flight_destination):
+    for flight in flights:
+        if flight['origin'] == current_flight_origin and flight['destination'] == current_flight_destination:
             route.append(flight)
-            all_flights.remove(flight)
+            flights.remove(flight)
             return
 
-        elif flight['origin'] == ori:
+        elif flight['origin'] == current_flight_origin and not route:
             route.append(flight)
-            all_flights.remove(flight)
+            flights.remove(flight)
 
-            flight_search(flight['destination'], dest)
+            flight_search(flight['destination'],
+                          current_flight_destination)
+
+        elif flight['origin'] == current_flight_origin:
+
+            route.append(flight)
+            flights.remove(flight)
+
+            flight_search(flight['destination'],
+                          current_flight_destination)
 
         else:
             route.clear()
             return "No such flight with a given paramaters."
 
 
-flight_search(origin, destination)
+flight_search(ticket_origin, ticket_destination)
 print(route)
-# print(all_flights)
