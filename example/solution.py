@@ -6,7 +6,7 @@ import datetime
 
 data_file = './example/example.csv'
 ticket_origin = 'WIW'
-ticket_destination = 'RFZ'
+ticket_destination = 'RFS'
 route = []
 
 """Helper function for converting datetime string to the datetime object."""
@@ -48,7 +48,7 @@ def flight_search(flight_origin, flight_destination, flights):
         if flight['origin'] == flight_origin and flight['destination'] == flight_destination and not route:
             route.append(flight)
             flights.remove(flight)
-            return
+            return route
 
         # the indirect flight to destination
         if flight['origin'] == flight_origin and flight['destination'] == flight_destination and route:
@@ -56,7 +56,7 @@ def flight_search(flight_origin, flight_destination, flights):
             if layover > datetime.timedelta(hours=1) and layover < datetime.timedelta(hours=6):
                 route.append(flight)
                 flights.remove(flight)
-                return
+                return route
 
         # the indirect flight from origin
         elif flight['origin'] == flight_origin and not route:
@@ -74,7 +74,8 @@ def flight_search(flight_origin, flight_destination, flights):
                 flight_search(flight['destination'],
                               flight_destination, flights)
 
-        else:
+        # no path from origin to destination
+        elif route:
             route.clear()
             return "No such flight with a given paramaters."
 
